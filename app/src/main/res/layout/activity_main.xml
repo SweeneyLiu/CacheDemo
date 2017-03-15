@@ -27,6 +27,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"/>
+
+        <Button
+            android:id="@+id/btn_lru_cache"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="LruCache"/>
         <Button
             android:id="@+id/btn_disk_cache"
             android:layout_width="match_parent"

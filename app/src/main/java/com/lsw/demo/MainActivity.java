@@ -23,6 +23,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        Button LruCacheButton = (Button)findViewById(R.id.btn_lru_cache);
+        LruCacheButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,LruCacheActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button button = (Button)findViewById(R.id.btn_disk_cache);
         button.setOnClickListener(new View.OnClickListener() {
             @Override

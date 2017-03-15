@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".DiskCacheActivity">
         </activity>
+        <activity android:name=".LruCacheActivity">
+        </activity>
     </application>
 
 </manifest>
