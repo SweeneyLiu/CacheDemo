@@ -7,10 +7,24 @@
     android:layout_height="match_parent"
     tools:context="com.lsw.demo.activity.LruCacheActivity">
 
-    <Button
-        android:id="@+id/test_lrucache_button"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="测试LruCache缓存"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <Button
+            android:id="@+id/test_lrucache_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试LruCache缓存"/>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher"/>
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
