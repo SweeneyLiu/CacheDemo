@@ -1,4 +1,4 @@
-package com.lsw.demo;
+package com.lsw.demo.activity;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -11,6 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.lsw.demo.R;
+import com.lsw.demo.util.DiskLruCache;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

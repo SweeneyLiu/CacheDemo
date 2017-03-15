@@ -1,4 +1,4 @@
-package com.lsw.demo;
+package com.lsw.demo.activity;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -7,11 +7,12 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.lsw.demo.R;
 
 public class MainActivity extends AppCompatActivity {
 

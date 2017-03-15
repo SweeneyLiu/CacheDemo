@@ -1,4 +1,4 @@
-package com.lsw.demo;
+package com.lsw.demo.activity;
 
 
 import android.graphics.Bitmap;
@@ -9,6 +9,8 @@ import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.Button;
+
+import com.lsw.demo.R;
 
 /**
  * LruCache的用法

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lsw.demo;
+package com.lsw.demo.util;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
