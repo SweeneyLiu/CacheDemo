@@ -44,6 +44,7 @@ public class DiskCacheActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
+                    //读取
                     String key = hashKeyForDisk(imageUrl);
                     DiskLruCache.Snapshot snapShot = mDiskLruCache.get(key);
                     if (snapShot != null) {
@@ -57,16 +58,58 @@ public class DiskCacheActivity extends AppCompatActivity {
             }
         });
 
-        try {
-            File cacheDir = getDiskCacheDir(this, "bitmap");
-            if (!cacheDir.exists()) {
-                cacheDir.mkdirs();
+        Button removeButton = (Button)findViewById(R.id.btn_remove_disk_cache);
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mDiskLruCache.remove(hashKeyForDisk(imageUrl));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(this), 1, 10 * 1024 * 1024);
+        });
+
+        //创建一个DiskLruCache的实例
+        getDiskLruCache(this,"bitmap", getAppVersion(this), 1, 10 * 1024 * 1024);
+
+        //写入磁盘缓存
+        writeToDiskCache();
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            mDiskLruCache.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            mDiskLruCache.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeToDiskCache() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -74,11 +117,11 @@ public class DiskCacheActivity extends AppCompatActivity {
                     String key = hashKeyForDisk(imageUrl);
                     DiskLruCache.Editor editor = mDiskLruCache.edit(key);
                     if (editor != null) {
-                        OutputStream outputStream = editor.newOutputStream(0);
+                        OutputStream outputStream = editor.newOutputStream(0);//创建一个输出流，由于前面在设置valueCount的时候指定的是1，所以这里index传0就可以了
                         if (downloadUrlToStream(imageUrl, outputStream)) {
-                            editor.commit();
+                            editor.commit();//提交写入
                         } else {
-                            editor.abort();
+                            editor.abort();//放弃写入
                         }
                     }
                     mDiskLruCache.flush();
@@ -87,21 +130,47 @@ public class DiskCacheActivity extends AppCompatActivity {
                 }
             }
         }).start();
-
     }
 
 
+    private void getDiskLruCache(Context context,String fileName, int appVersion, int valueCount, long maxSize){
+        try {
+            File cacheDir = getDiskCacheDir(context, fileName);
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
+            }
+            //open()方法接收四个参数，第一个参数指定的是数据的缓存地址，第二个参数指定当前应用程序的版本号，
+            //第三个参数指定同一个key可以对应多少个缓存文件，基本都是传1，第四个参数指定最多可以缓存多少字节的数据。
+            //需要注意的是，每当版本号改变，缓存路径下存储的所有数据都会被清除掉，因为DiskLruCache认为当应用程序有版本更新的时候，所有的数据都应该从网上重新获取。(?怎么更新)
+            mDiskLruCache = DiskLruCache.open(cacheDir, appVersion, valueCount, maxSize);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 获取磁盘的缓存目录
+     * @param context
+     * @param uniqueName
+     * @return
+     */
     public File getDiskCacheDir(Context context, String uniqueName) {
         String cachePath;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
-            cachePath = context.getExternalCacheDir().getPath();
+            cachePath = context.getExternalCacheDir().getPath();//   /sdcard/Android/data/<application package>/cache
         } else {
-            cachePath = context.getCacheDir().getPath();
+            cachePath = context.getCacheDir().getPath();//   /data/data/<application package>/cache
         }
         return new File(cachePath + File.separator + uniqueName);
     }
 
+    /**
+     * 获取应用程序的版本号
+     * @param context
+     * @return
+     */
     public int getAppVersion(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
@@ -112,6 +181,12 @@ public class DiskCacheActivity extends AppCompatActivity {
         return 1;
     }
 
+    /**
+     * 下载一张图片
+     * @param urlString
+     * @param outputStream
+     * @return
+     */
     private boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
         HttpURLConnection urlConnection = null;
         BufferedOutputStream out = null;
@@ -119,7 +194,7 @@ public class DiskCacheActivity extends AppCompatActivity {
         try {
             final URL url = new URL(urlString);
             urlConnection = (HttpURLConnection) url.openConnection();
-            in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
+            in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);//8 * 1024是buffer的大小
             out = new BufferedOutputStream(outputStream, 8 * 1024);
             int b;
             while ((b = in.read()) != -1) {
@@ -147,6 +222,11 @@ public class DiskCacheActivity extends AppCompatActivity {
     }
 
 
+    /**
+     *将字符串进行MD5编码
+     * @param key
+     * @return
+     */
     public String hashKeyForDisk(String key) {
         String cacheKey;
         try {
@@ -159,6 +239,11 @@ public class DiskCacheActivity extends AppCompatActivity {
         return cacheKey;
     }
 
+    /**
+     *字节转16进制字符串
+     * @param bytes
+     * @return
+     */
     private String bytesToHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < bytes.length; i++) {

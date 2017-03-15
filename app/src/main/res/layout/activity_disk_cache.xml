@@ -12,22 +12,16 @@
         android:layout_width="368dp"
         android:layout_height="495dp"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="3">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="权重"/>
-        </LinearLayout>
         <Button
             android:id="@+id/btn_read_disk_cache"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="DiskLruCache"/>
+        <Button
+            android:id="@+id/btn_remove_disk_cache"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="remove_DiskLruCache"/>
 
         <ImageView
             android:id="@+id/image_view"
