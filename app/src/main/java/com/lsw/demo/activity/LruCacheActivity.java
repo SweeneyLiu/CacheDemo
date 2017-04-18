@@ -21,14 +21,17 @@ public class LruCacheActivity extends AppCompatActivity {
     private static final String TAG = "LruCacheActivity";
     private LruCache<String,Bitmap> mLruCache;
     private String key;
-    private Bitmap bitmap;
+    private Bitmap mBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lru_cache);
         key = String.valueOf(R.mipmap.ic_launcher);
-        bitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
+        mBitmap = BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher);
+        /*
+        注意：默认是以缓存大小是以条目数量来衡量的，默认缓存大小int cacheSize = 4 * 1024 * 1024; // 4MiB ,可以通过下面的方式来设置缓存大小
+        * */
         int maxCacheSize = (int)(Runtime.getRuntime().maxMemory()/1024)/8;//单位kb
         mLruCache = new LruCache<>(maxCacheSize);
         Button button = (Button)findViewById(R.id.test_lrucache_button);
@@ -36,7 +39,7 @@ public class LruCacheActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(getBitmapFromCache(key)==null){
-                    addBitmapToCache(key,bitmap);
+                    addBitmapToCache(key,mBitmap);
                     Log.d(TAG, "onCreate: 缓存中没有bitmap");
                 }else{
                     Log.d(TAG, "onCreate: 从缓存中读取bitmap");
